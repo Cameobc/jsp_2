@@ -11,10 +11,11 @@ import com.iu.util.DBConnector;
 public class PointDAO {
 	
 	//getTotalCount  전체 개수 받아오는거 리턴  
-	public int getTotalCount() throws Exception {
+	public int getTotalCount(String kind, String search) throws Exception {
 		Connection con = DBConnector.getConnect();
-		String sql = "select count(num) from point";
+		String sql = "select count(num) from point where "+ kind +" like ?";
 		PreparedStatement st = con.prepareStatement(sql);
+		st.setString(1, "%"+search+"%");
 		ResultSet rs = st.executeQuery();
 		rs.next();
 		int result= rs.getInt("count(num)");
@@ -23,13 +24,13 @@ public class PointDAO {
 	}
 	
 	//메서드명 selectList 리턴 ArrayList<PointDTO>
-	public ArrayList<PointDTO> selectList(String search, int startRow, int lastRow) throws Exception{
+	public ArrayList<PointDTO> selectList(String kind, String search, int startRow, int lastRow) throws Exception{
 		ArrayList<PointDTO> ar = new ArrayList<PointDTO>();
 		Connection con = DBConnector.getConnect();
 		//엔터칠때마다 앞뒤로 띄어쓰기하기
 		String sql =" select * from "
 				+ "(select rownum r, p.*from "
-				+ "(select * from point where name like ? order by num desc) p) "
+				+ "(select * from point where "+ kind+" like ? order by num desc) p) "
 				+ "where r between ? and ?";
 		PreparedStatement st = con.prepareStatement(sql);
 		st.setString(1, "%"+search+"%");

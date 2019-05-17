@@ -18,6 +18,15 @@
     		
     	}
     String kind = request.getParameter("kind");
+    if(kind==null){
+    	kind="name";
+    }else if(kind.equals("c")){
+    	kind="contents";
+    }else if(kind.equals("w")){
+    	kind="writer";
+    }else{
+    	kind="name";  //kind="writer";
+    }
     String search = request.getParameter("search");
     if(search == null){
     	search="";
@@ -29,7 +38,7 @@
     int lastRow=curPage*perPage;//10
     //1.총 글의 개수
     PointDAO pointDAO = new PointDAO();
-    int totalCount = pointDAO.getTotalCount();
+    int totalCount = pointDAO.getTotalCount(kind, search);
     //2.총 페이지 개수
     int totalPage;
     if((totalCount%perPage)==0){
@@ -37,7 +46,7 @@
     }else{
     	totalPage=totalCount/perPage+1;
     }
-    ArrayList<PointDTO> ar = pointDAO.selectList(search, startRow, lastRow);
+    ArrayList<PointDTO> ar = pointDAO.selectList(kind, search, startRow, lastRow);
     //3.블럭 당 개수
     int perBlock = 5;
     //4.총 블럭 개수
@@ -117,13 +126,13 @@
 	</div>
 	<div class= "row">
 		<%if(startNum!=1){ %>  <!-- curBlock>1 -->
-		<a href="./point.jsp?curPage=<%=startNum-1%>">[이전]</a>
+		<a href="./point.jsp?curPage=<%=startNum-1%>&kind=<%=kind%>&search=<%=search%>">[이전]</a>
 		<%} %>
 		<% for(int i=startNum;i<=lastNum;i++){ %>
-			<a href="./point.jsp?curPage=<%=i %>"><%=i %></a>
+			<a href="./point.jsp?curPage=<%=i %>&kind=<%=kind%>&search=<%=search%>"><%=i %></a>
 		<%} %>
 		<%if(curBlock<totalBlock){ %>
-		<a href="./point.jsp?curPage=<%=lastNum+1%>">[다음]</a>
+		<a href="./point.jsp?curPage=<%=lastNum+1%>&kind=<%=kind%>&search=<%=search%>">[다음]</a>
 		<%} %>
 	</div>
 	<div class="row">

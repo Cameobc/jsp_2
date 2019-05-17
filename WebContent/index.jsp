@@ -1,3 +1,4 @@
+<%@page import="com.iu.member.MemberDTO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -58,7 +59,11 @@
   <!-- Page Content -->
   <div class="container">
 
-    <h1 class="my-4">Welcome to Modern Business</h1>
+    <h1 class="my-4">Welcome to 
+    <%if(memberDTO!=null){ %>
+    <%=memberDTO.getId() %>
+    <%} %>
+    </h1>
 
     <!-- Marketing Icons Section -->
     <div class="row">

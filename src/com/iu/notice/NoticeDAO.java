@@ -10,10 +10,11 @@ import com.iu.util.DBConnector;
 public class NoticeDAO {
 	
 	//rownum추가해서 조회하는 sql문 작성 메서드명은 getCountNum
-	public int getCountNum() throws Exception {
+	public int getCountNum(String kind, String search) throws Exception {
 		Connection con = DBConnector.getConnect();
-		String sql="select count(no) from notice";
+		String sql="select count(no) from notice where "+kind+" like ?";
 		PreparedStatement st = con.prepareStatement(sql);
+		st.setString(1, "%"+search+"%");
 		ResultSet rs = st.executeQuery();
 		rs.next();
 		int result = Integer.parseInt(rs.getString(1));
@@ -39,16 +40,17 @@ public class NoticeDAO {
 	}*/
 
 	//selectList() r: ar
-	public ArrayList<NoticeDTO> selectList(int startRow, int lastRow)throws Exception{
+	public ArrayList<NoticeDTO> selectList(String kind, String search, int startRow, int lastRow)throws Exception{
 		ArrayList<NoticeDTO> ar = new ArrayList<NoticeDTO>();
 		Connection con = DBConnector.getConnect();
 		String sql = " select * from "
 				+ "(select rownum r, n.* from "
-				+ "(select no, title, writer, reg_date, hit from notice order by no desc) n) "
+				+ "(select no, title, writer, reg_date, hit from notice where "+kind+" like ? order by no desc) n) "
 				+ "where r between ? and ?";
 		PreparedStatement st = con.prepareStatement(sql);
-		st.setInt(1, startRow);
-		st.setInt(2, lastRow);
+		st.setString(1, "%"+search+"%");
+		st.setInt(2, startRow);
+		st.setInt(3, lastRow);
 		ResultSet rs = st.executeQuery();
 		while(rs.next()) {
 			NoticeDTO noticeDTO = new NoticeDTO();
